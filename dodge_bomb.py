@@ -63,6 +63,9 @@ def main():
             vx = -vx
         if not enn_in[1]:
             vy = -vy
+            
+        if kk_rct.colliderect(enn_rct):
+            return
         
         enn_rct.move_ip(vx,vy)
         pg.display.update()
