@@ -1,5 +1,6 @@
 import sys
 import pygame as pg
+import random
 
 
 WIDTH, HEIGHT = 1600, 900
@@ -11,6 +12,10 @@ def main():
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    enn = pg.Surface((20, 20))
+    pg.draw.circle(enn, (255, 0, 0), (10, 10), 10)
+    enn.set_colorkey((0, 0, 0))
+    x, y = random.randint(0,1600), random.randint(0,900)
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -20,6 +25,7 @@ def main():
 
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_img, [900, 400])
+        screen.blit(enn, [x,y])
         pg.display.update()
         tmr += 1
         clock.tick(10)
