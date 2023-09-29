@@ -16,6 +16,9 @@ def main():
     pg.draw.circle(enn, (255, 0, 0), (10, 10), 10)
     enn.set_colorkey((0, 0, 0))
     x, y = random.randint(0,1600), random.randint(0,900)
+    vx,vy = +5,+5
+    enn_rct = enn.get_rect()
+    enn_rct.center = x, y
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -25,10 +28,11 @@ def main():
 
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_img, [900, 400])
-        screen.blit(enn, [x,y])
+        screen.blit(enn, [enn_rct.x, enn_rct.y])
+        enn_rct.move_ip(vx,vy)
         pg.display.update()
         tmr += 1
-        clock.tick(10)
+        clock.tick(50)
 
 
 if __name__ == "__main__":
