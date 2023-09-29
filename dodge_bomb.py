@@ -5,6 +5,10 @@ import random
 
 WIDTH, HEIGHT = 1600, 900
 
+def gamengai(rect):
+    xx = rect.left >= 0 and rect.right <= WIDTH
+    yy = rect.top >= 0 and rect.bottom <= HEIGHT
+    return xx, yy
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -32,7 +36,7 @@ def main():
     
     while True:
         for event in pg.event.get():
-            if event.type == pg.QUIT: 
+            if event.type == pg.QUIT:
                 return
 
         screen.blit(bg_img, [0, 0])
@@ -46,7 +50,20 @@ def main():
                 total[1] += m[1]
         kk_rct.move_ip(total)
         
+        kk_in = gamengai(kk_rct)
+        if not kk_in[0]:
+            kk_rct.x = max(0, min(kk_rct.x, WIDTH - kk_rct.width))
+        if not kk_in[1]:
+            kk_rct.y = max(0, min(kk_rct.y, HEIGHT - kk_rct.height))
+
         screen.blit(enn, [enn_rct.x, enn_rct.y])
+
+        enn_in = gamengai(enn_rct)
+        if not enn_in[0]:
+            vx = -vx
+        if not enn_in[1]:
+            vy = -vy
+        
         enn_rct.move_ip(vx,vy)
         pg.display.update()
         tmr += 1
