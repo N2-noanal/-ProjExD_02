@@ -1,7 +1,7 @@
 import sys
 import pygame as pg
 import random
-
+import math
 
 WIDTH, HEIGHT = 1600, 900
 
@@ -29,8 +29,8 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
     
-    accs = [a for a in range(1, 11)] #加速度のリスト
-    enn_imgs = [] #爆弾のコスチュームのリスト
+    accs = [a for a in range(1, 11)] # 加速度のリスト
+    enn_imgs = [] # 爆弾のコスチュームのリスト
     for r in range(1, 11):
         enn_img = pg.Surface((20*r, 20*r), pg.SRCALPHA)
         pg.draw.circle(enn_img, (255, 0, 0), (10*r, 10*r), 10*r)
@@ -60,7 +60,7 @@ def main():
 
         screen.blit(bg_img, [0, 0])
         
-        #こうかとんを動かす
+        # こうかとんを動かす
         key_lst = pg.key.get_pressed()
         total = [0, 0]
         newkk = kk_img
@@ -71,13 +71,13 @@ def main():
                 total[1] += m[1]
         kk_rct.move_ip(total)
         
-        #こうかとんの向きを変える
+        # こうかとんの向きを変える
         for kk, mm in cos_zi.items():
             if total[0] == kk[0] and total[1] == kk[1]:
                 newkk = pg.transform.rotozoom(mm[0], mm[1], 1.0)
         screen.blit(newkk, [kk_rct.x, kk_rct.y])
         
-        #こうかとんと爆弾が画面外に出たか判定
+        # こうかとんと爆弾が画面外に出たか判定
         kk_in = gamengai(kk_rct)
         if not kk_in[0]:
             kk_rct.x = max(0, min(kk_rct.x, WIDTH - kk_rct.width))
@@ -90,13 +90,25 @@ def main():
         if not enn_in[1]:
             vy = -vy
             
-        #爆弾を時間とともに加速、拡大
-        avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]
+        # 爆弾を時間とともに加速、拡大
+        """avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]
         enn_img = enn_imgs[min(tmr//500, 9)]
         
+        screen.blit(enn_img, [enn_rct.x, enn_rct.y])"""
+        
+        # 爆弾がこうかとんに近づく
+        kyori = (kk_rct.centerx-enn_rct.centerx, kk_rct.centery-enn_rct.centery) # 爆弾から見たベクトル
+        norm = math.sqrt(kyori[0]**2 + kyori[1]**2) 
+        vctr =  (kyori[0]/norm*math.sqrt(50), kyori[1]/norm*math.sqrt(50)) # ベクトルを√50になるように正規化
+        if norm < 500:
+            avx, avy = vctr[0]*0.75, vctr[1]*0.75 # 距離が500未満のとき慣性として前の方向に移動(*0.75はてきとー)
+        else:
+            avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)] # 爆弾を加速していく
+        
+        enn_img = enn_imgs[min(tmr//500, 9)] # 時間とともに爆弾を拡大
         screen.blit(enn_img, [enn_rct.x, enn_rct.y])
           
-        #こうかとんと爆弾がぶつかったら終了  
+        # こうかとんと爆弾がぶつかったら終了  
         if kk_rct.colliderect(enn_rct):
             return
         
