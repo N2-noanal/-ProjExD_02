@@ -127,7 +127,7 @@ def main():
         # こうかとんと爆弾がぶつかったら終了  
         if kk_rct.colliderect(enn_rct):
             screen.blit(newkk, [kk_rct.x, kk_rct.y]) # こうかとん泣く
-            screen.blit(txt, [800, 400]) # GAMEOVERを表示する
+            screen.blit(txt, [kk_rct.x, kk_rct.y]) # GAMEOVERを表示する
             pg.display.update()  # 画面を更新
             pg.time.delay(1000)
             return
