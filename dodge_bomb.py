@@ -66,7 +66,7 @@ def main():
     }
     
     fonto = pg.font.Font(None, 80)
-    txt = fonto.render("GAME OVER!", True, (255, 255, 255))
+    txt = fonto.render("GAME OVER!", True, (255, 0, 100))
     
     while True:
         for event in pg.event.get():
@@ -127,7 +127,7 @@ def main():
         # こうかとんと爆弾がぶつかったら終了  
         if kk_rct.colliderect(enn_rct):
             screen.blit(newkk, [kk_rct.x, kk_rct.y]) # こうかとん泣く
-            screen.blit(txt, [300, 200]) # GAMEOVERを表示する
+            screen.blit(txt, [800, 400]) # GAMEOVERを表示する
             pg.display.update()  # 画面を更新
             pg.time.delay(1000)
             return
