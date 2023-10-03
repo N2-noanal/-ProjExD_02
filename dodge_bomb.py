@@ -2,19 +2,17 @@ import sys
 import pygame as pg
 import random
 import math
+import time
 
 
 WIDTH, HEIGHT = 1600, 900
 
 
 def gamengai(rect):
-    """こうかとんと爆弾が画面外に出たことを検知する関数
-
-    Args:
-        rect (img): キャラクターを囲む四角
-
-    Returns:
-        int:x座標y座標の範囲で画面外にでてしまう座標
+    """
+    こうかとんと爆弾が画面外に出たことを検知する関数
+    引数 rect (img): キャラクターを囲む四角
+    戻り値 int: x座標y座標の範囲で画面外にでてしまう座標
     """
     xx = rect.left >= 0 and rect.right <= WIDTH
     yy = rect.top >= 0 and rect.bottom <= HEIGHT
@@ -25,10 +23,13 @@ def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
-    kk_img = pg.image.load("ex02/fig/3.png")
-    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
-    kk_rct = kk_img.get_rect()
+    kk_img = [pg.image.load("ex02/fig/3.png"), pg.image.load("ex02/fig/8.png")]
+    kk_img = [pg.transform.rotozoom(kk_img[0], 0, 2.0), pg.transform.rotozoom(kk_img[1], 0, 2.0)]
+    kk_rct = kk_img[0].get_rect()
     kk_rct.center = 900,400
+    kk_rct2 = kk_img[1].get_rect()
+    kk_rct2.center = kk_rct.x, kk_rct.y
+    newkk = kk_img[0]
     
     enn = pg.Surface((20, 20))
     pg.draw.circle(enn, (255, 0, 0), (10, 10), 10)
@@ -54,15 +55,18 @@ def main():
         pg.K_RIGHT: (+5, 0),
         }
     cos_zi = {
-        (0, 5): (pg.transform.flip(kk_img, True, False), -90),
-        (5, 5): (pg.transform.flip(kk_img, True, False), -45),
-        (5, 0): (pg.transform.flip(kk_img, True, False), 0),
-        (5, -5): (pg.transform.flip(kk_img, True, False), 45),
-        (0, -5): (pg.transform.flip(kk_img, True, False), 90),
-        (-5, 5): (kk_img, 45),
-        (-5, -5): (kk_img, -45),
-        (-5, 0): (kk_img, 0)
+        (0, 5): (pg.transform.flip(kk_img[0], True, False), -90),
+        (5, 5): (pg.transform.flip(kk_img[0], True, False), -45),
+        (5, 0): (pg.transform.flip(kk_img[0], True, False), 0),
+        (5, -5): (pg.transform.flip(kk_img[0], True, False), 45),
+        (0, -5): (pg.transform.flip(kk_img[0], True, False), 90),
+        (-5, 5): (kk_img[0], 45),
+        (-5, -5): (kk_img[0], -45),
+        (-5, 0): (kk_img[0], 0)
     }
+    
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("GAME OVER!", True, (255, 255, 255))
     
     while True:
         for event in pg.event.get():
@@ -74,7 +78,11 @@ def main():
         # こうかとんを動かす
         key_lst = pg.key.get_pressed()
         total = [0, 0]
-        newkk = kk_img
+        
+        # 爆弾とぶつかった場合、新しい画像に切り替える
+        if kk_rct.colliderect(enn_rct):
+            newkk = kk_img[1]  # 爆弾とぶつかったら新しい画像に変更
+            #screen.blit(kk_img[0], [kk_rct2.x, kk_rct2.y])  # こうかとんのもう一方の画像は表示しない
         
         for k, m in key_zi.items():
             if key_lst[k]:
@@ -118,6 +126,10 @@ def main():
           
         # こうかとんと爆弾がぶつかったら終了  
         if kk_rct.colliderect(enn_rct):
+            screen.blit(newkk, [kk_rct.x, kk_rct.y]) # こうかとん泣く
+            screen.blit(txt, [300, 200]) # GAMEOVERを表示する
+            pg.display.update()  # 画面を更新
+            pg.time.delay(1000)
             return
         
         enn_rct.move_ip(avx, avy)
