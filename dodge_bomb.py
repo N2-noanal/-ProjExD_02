@@ -3,12 +3,23 @@ import pygame as pg
 import random
 import math
 
+
 WIDTH, HEIGHT = 1600, 900
 
+
 def gamengai(rect):
+    """こうかとんと爆弾が画面外に出たことを検知する関数
+
+    Args:
+        rect (img): キャラクターを囲む四角
+
+    Returns:
+        int:x座標y座標の範囲で画面外にでてしまう座標
+    """
     xx = rect.left >= 0 and rect.right <= WIDTH
     yy = rect.top >= 0 and rect.bottom <= HEIGHT
     return xx, yy
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -89,22 +100,19 @@ def main():
             vx = -vx
         if not enn_in[1]:
             vy = -vy
-            
-        # 爆弾を時間とともに加速、拡大
-        """avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]
-        enn_img = enn_imgs[min(tmr//500, 9)]
-        
-        screen.blit(enn_img, [enn_rct.x, enn_rct.y])"""
         
         # 爆弾がこうかとんに近づく
         kyori = (kk_rct.centerx-enn_rct.centerx, kk_rct.centery-enn_rct.centery) # 爆弾から見たベクトル
         norm = math.sqrt(kyori[0]**2 + kyori[1]**2) 
-        vctr =  (kyori[0]/norm*math.sqrt(50), kyori[1]/norm*math.sqrt(50)) # ベクトルを√50になるように正規化
         if norm < 500:
-            avx, avy = vctr[0]*0.75, vctr[1]*0.75 # 距離が500未満のとき慣性として前の方向に移動(*0.75はてきとー)
+        # 距離が500未満の場合、現在の方向に一定の慣性を持って進行し続ける
+            avx, avy = vx, vy  # 慣性を調整するための係数を調整
         else:
-            avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)] # 爆弾を加速していく
-        
+        # 距離が500以上の場合、従来通りキャラクターを追跡する
+            vctr = (kyori[0] / norm * math.sqrt(50), kyori[1] / norm * math.sqrt(50)) # ベクトルを√50になるように正規化
+            avx, avy = vctr[0] * accs[min(tmr // 500, 9)], vctr[1] * accs[min(tmr // 500, 9)]
+            vx, vy = vctr[0], vctr[1]
+            
         enn_img = enn_imgs[min(tmr//500, 9)] # 時間とともに爆弾を拡大
         screen.blit(enn_img, [enn_rct.x, enn_rct.y])
           
