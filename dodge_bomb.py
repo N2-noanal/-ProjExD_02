@@ -66,7 +66,8 @@ def main():
     }
     
     fonto = pg.font.Font(None, 80)
-    txt = fonto.render("GAME OVER!", True, (255, 0, 100))
+    txt = fonto.render("GAME OVER!SPACE to restart", True, (255, 0, 100))
+    
     
     while True:
         for event in pg.event.get():
@@ -129,9 +130,21 @@ def main():
             screen.blit(newkk, [kk_rct.x, kk_rct.y]) # こうかとん泣く
             screen.blit(txt, [kk_rct.x, kk_rct.y]) # GAMEOVERを表示する
             pg.display.update()  # 画面を更新
-            pg.time.delay(1000)
-            return
-        
+            pg.time.delay(3000) # 3秒待つ
+            
+            restart = False
+            while not restart:
+                for event in pg.event.get():
+                    if event.type == pg.KEYDOWN: # スペースキーが押されたらリスタート
+                        if event.key == pg.K_SPACE:
+                            restart = True
+                        
+            newkk = kk_img[0]  # こうかとんの画像を元の画像に戻す
+            enn_rct.x = random.randint(0, 1600)  # 爆弾の位置をリセット
+            enn_rct.y = random.randint(0, 900)
+            screen.blit(newkk, [kk_rct.x, kk_rct.y])
+            
+
         enn_rct.move_ip(avx, avy)
         pg.display.update()
         tmr += 1
