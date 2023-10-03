@@ -6,7 +6,7 @@ import math
 
 WIDTH, HEIGHT = 1600, 900
 
-
+#check
 def gamengai(rect):
     """こうかとんと爆弾が画面外に出たことを検知する関数
 
